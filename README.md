@@ -32,9 +32,8 @@ Add the following secrets to your repository:
 
 - `SOURCE_REPO_PAT`: Personal Access Token for the source repository.
 
-```!note
-    Ensure the Personal Access Token (PAT) has the necessary permissions to access/read the source repository.
-```
+> [!IMPORTANT]  
+> Ensure the Personal Access Token (PAT) has the necessary permissions to access/read the source repository.
 
 ### Step 2: Define Workflow Configuration
 
@@ -142,9 +141,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or fixes.
 
-## Acknowledgements
+## Libraries Used
 
-This action uses the [actions/checkout](https://github.com/actions/checkout) and [@actions/core](https://github.com/actions/toolkit) libraries.
+This action uses the following libraries:
+
+- `@actions/core`: Core functions for GitHub Actions.
+- `@actions/github`: GitHub API wrapper for interacting with GitHub.
+- `@actions/exec`: Functions to execute commands.
+- `@octokit/rest`: REST API client for GitHub.
 
 ---
 
