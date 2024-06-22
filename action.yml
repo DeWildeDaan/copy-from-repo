@@ -1,0 +1,34 @@
+name: 'Copy Files from Source Repo'
+description: 'Copy files from a source repository to the current repository.'
+author: 'DeWildeDaan'
+inputs:
+  source_repo:
+    description: 'The source repository in the format owner/repo.'
+    required: true
+  source_path:
+    description: 'The path in the source repository to copy files from.'
+    required: true
+  destination_path:
+    description: 'The path in the current repository to copy files to.'
+    required: true
+  commit_message:
+    description: 'The commit message for the changes.'
+    required: false
+    default: 'Automated file copy commit'
+  pr_title:
+    description: 'The title for the pull request.'
+    required: false
+    default: 'Automated file copy PR'
+  create_pr:
+    description: 'Whether to create a pull request (true/false).'
+    required: false
+    default: 'false'
+  source_repo_token:
+    description: 'Personal Access/GitHub App Token to access the source repository.'
+    required: true
+runs:
+  using: 'node12'
+  main: 'index.js'
+branding:
+  icon: 'download-cloud'
+  color: 'purple'
