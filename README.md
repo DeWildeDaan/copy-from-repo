@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run file copy action
-        uses: ./ # Uses an action in the same repository
+        uses: DeWildeDaan/copy-from-repo@main
         with:
           source_repo: "owner/source-repo"
           source_path: "path/to/copy"
@@ -87,7 +87,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run file copy action
-        uses:
+        uses: DeWildeDaan/copy-from-repo@main
         with:
           source_repo: "octocat/source-repo"
           source_path: "data/files"
