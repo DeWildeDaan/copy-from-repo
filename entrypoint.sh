@@ -33,6 +33,9 @@ mkdir -p "${DESTINATION_PATH}"
 # Copy files from source to destination
 cp -r "$CLONE_DIR/${SOURCE_PATH}" "${DESTINATION_PATH}"
 
+# Switch to destination directory
+cd "$DESTINATION_PATH"
+
 # Configure git
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
