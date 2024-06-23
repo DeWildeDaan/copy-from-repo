@@ -52,6 +52,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   copy-files:
     runs-on: ubuntu-latest
@@ -86,6 +90,10 @@ name: Copy Files from Source Repo
 on:
   schedule:
     - cron: "0 0 * * *" # Runs every day at midnight
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   copy-files:
