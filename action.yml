@@ -26,8 +26,8 @@ inputs:
   source_repo_token:
     description: 'Personal Access/GitHub App Token to access the source repository.'
     required: true
-  github_token:
-    description: 'GitHub token to gain write access to the current repository.'
+  destination_repo_token:
+    description: 'Personal Access/GitHub App Token to gain write access to the current repository.'
     required: true
 runs:
   using: docker
@@ -40,7 +40,7 @@ runs:
     - '${{ inputs.create_pr }}'
     - '${{ inputs.pr_title }}'
     - '${{ inputs.source_repo_token }}'
-    - '${{ inputs.github_token }}'
+    - '${{ inputs.destination_repo_token }}'
 branding:
   icon: 'download-cloud'
   color: 'purple'

@@ -11,7 +11,7 @@ COMMIT_MESSAGE="${4}"
 CREATE_PR="${5}"
 PR_TITLE="${6}"
 SOURCE_REPO_TOKEN="${7}"
-GITHUB_TOKEN="${8}"
+DEST_REPO_TOKEN="${8}"
 
 # Validate inputs
 if [ -z "$SOURCE_REPO" ] || [ -z "$SOURCE_PATH" ] || [ -z "$DESTINATION_PATH" ] || [ -z "$COMMIT_MESSAGE" ] || [ -z "$CREATE_PR" ] || [ -z "$PR_TITLE" ] || [ -z "$SOURCE_REPO_TOKEN" ] || [ -z "$GITHUB_TOKEN" ]; then
@@ -42,14 +42,14 @@ git commit -m "${COMMIT_MESSAGE}"
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
   REPO=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
-  HEAD="auto-file-copy-$(date +%s)-$(openssl rand -hex 3)"
+  HEAD="auto-file-copy-$(date +'%Y%m%d%H%M%S')-$(openssl rand -hex 3)"
 
   # Create a new branch for the PR
   git checkout -b "${HEAD}"
   git push --set-upstream origin "${HEAD}"
 
   # Create the PR
-  curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" \
+  curl -X POST -H "Authorization: token ${DEST_REPO_TOKEN}" \
        -d "{\"title\":\"${PR_TITLE}\", \"head\":\"${HEAD}\", \"base\":\"main\"}" \
        "https://api.github.com/repos/${OWNER}/${REPO}/pulls"
 else 
