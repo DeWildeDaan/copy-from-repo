@@ -39,10 +39,6 @@ git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
 
-# Pull with rebase from the main branch
-git pull --rebase origin main
-git push || { echo "Failed to push changes"; exit 1; }
-
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
   REPO=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
@@ -56,6 +52,10 @@ if [ "${CREATE_PR}" == "true" ]; then
   curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" \
        -d "{\"title\":\"${PR_TITLE}\", \"head\":\"${HEAD}\", \"base\":\"main\"}" \
        "https://api.github.com/repos/${OWNER}/${REPO}/pulls"
+else 
+    # Pull with rebase from the main branch
+    git pull --rebase origin main
+    git push || { echo "Failed to push changes"; exit 1; }
 fi
 
 # Cleanup
