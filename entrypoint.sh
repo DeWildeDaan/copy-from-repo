@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -eu
-set +x
+set -x
 
 # Required inputs
 SOURCE_REPO="${1}"
@@ -39,15 +39,19 @@ pwd
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-# Add, commit, and push changes
-git add "${DESTINATION_PATH}"
-git commit -m "${COMMIT_MESSAGE}"
-
+git status 
 # Check if there are changes or untracked files
 if git diff-index --quiet HEAD --; then
     echo "No changes or untracked files found. Exiting gracefully."
     exit 0
 fi
+
+# Add, commit, and push changes
+git add "${DESTINATION_PATH}"
+git status
+git commit -m "${COMMIT_MESSAGE}"
+
+
 
 # Create Pull Request
 if [ "${CREATE_PR}" == "true" ]; then
