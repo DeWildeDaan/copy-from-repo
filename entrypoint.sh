@@ -14,8 +14,8 @@ SOURCE_REPO_TOKEN="${7}"
 DEST_REPO_TOKEN="${8}"
 
 # Validate inputs
-if [ -z "$SOURCE_REPO" ] || [ -z "$SOURCE_PATH" ] || [ -z "$DESTINATION_PATH" ] || [ -z "$COMMIT_MESSAGE" ] || [ -z "$CREATE_PR" ] || [ -z "$PR_TITLE" ] || [ -z "$SOURCE_REPO_TOKEN" ] || [ -z "$GITHUB_TOKEN" ]; then
-    echo "Error: One or more required inputs are missing."
+if [ -z "$SOURCE_REPO" ] || [ -z "$SOURCE_PATH" ] || [ -z "$DESTINATION_PATH" ] || [ -z "$COMMIT_MESSAGE" ] || [ -z "$CREATE_PR" ] || [ -z "$PR_TITLE" ] || [ -z "$SOURCE_REPO_TOKEN" ] || [ -z "$DEST_REPO_TOKEN" ]; then
+    echo "::error:: One or more required inputs are missing."
     exit 1
 fi
 
