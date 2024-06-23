@@ -9,21 +9,21 @@ This action allows you to synchronize repositories without granting write permis
 
 - **File Copying**: Copy files from a specified path in a source repository to a specified path in the current repository.
 - **Customizable Commit Message**: Set a custom commit message for the changes.
-- **Pull Request Creation**: Optionally create a pull request with a custom title.
+- **Pull Request Creation**: Optionally create a pull request with a custom title. In case you don't create a PR, the changes will be pushed to the `main` branch.
 - **Authentication**: Securely authenticate with the source repository using a Personal Access Token (PAT).
 
 ## Inputs
 
-| Input Name          | Description                                           | Required | Default                      |
-| ------------------- | ----------------------------------------------------- | -------- | ---------------------------- |
-| `source_repo`       | The source repository in the format `owner/repo`.     | Yes      | N/A                          |
-| `source_path`       | The path in the source repository to copy files from. | Yes      | N/A                          |
-| `destination_path`  | The path in the current repository to copy files to.  | Yes      | N/A                          |
-| `commit_message`    | The commit message for the changes.                   | No       | `Automated file copy commit` |
-| `pr_title`          | The title for the pull request.                       | No       | `Automated file copy PR`     |
-| `create_pr`         | Whether to create a pull request (`true`/`false`).    | No       | `false`                      |
-| `source_repo_token` | Personal Access Token for the source repository.      | Yes      | N/A                          |
-| `github_token`      | GitHub token for the current repository.              | Yes      | N/A                          |
+| Input Name               | Description                                                  | Required | Default                      |
+| ------------------------ | ------------------------------------------------------------ | -------- | ---------------------------- |
+| `source_repo`            | The source repository in the format `owner/repo`.            | Yes      | N/A                          |
+| `source_path`            | The path in the source repository to copy files from.        | Yes      | N/A                          |
+| `destination_path`       | The path in the current repository to copy files to.         | Yes      | N/A                          |
+| `commit_message`         | The commit message for the changes.                          | No       | `Automated file copy commit` |
+| `pr_title`               | The title for the pull request.                              | No       | `Automated file copy PR`     |
+| `create_pr`              | Whether to create a pull request (`true`/`false`).           | No       | `false`                      |
+| `source_repo_token`      | Personal Access/GitHub App token for the source repository.  | Yes      | N/A                          |
+| `destination_repo_token` | Personal Access/GitHub App token for the current repository. | Yes      | N/A                          |
 
 ## Usage
 
@@ -32,9 +32,13 @@ This action allows you to synchronize repositories without granting write permis
 Add the following secrets to your repository:
 
 - `SOURCE_REPO_PAT`: Personal Access Token for the source repository.
+- `DEST_REPO_PAT`: Personal Access Token for the source repository.
 
 > [!IMPORTANT]  
 > Ensure the Personal Access Token (PAT) has the necessary permissions to access/read the source repository.
+
+> [!INFO]  
+> In case you dont want to create a PR to merge the changes in the current repo, you can use a `secrets.GITHUB_TOKEN` as `destination_repo_token`
 
 ### Step 2: Define Workflow Configuration
 
@@ -62,17 +66,19 @@ jobs:
           source_path: "path/to/copy"
           destination_path: "path/to/destination"
           commit_message: "Custom commit message"
-          create_pr: "true"
+          create_pr: true
           pr_title: "Custom PR title"
           source_repo_token: ${{ secrets.SOURCE_REPO_PAT }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_repo_token: ${{ secrets.DEST_REPO_PAT }}
 ```
 
 ### Step 3: Push Changes
 
 Push the `.github/workflows/copy-files.yml` file to your repository to trigger the action.
 
-## Example using a GitHub app token
+## Examples
+
+Example using a GitHub app token:
 
 ```yaml
 name: Copy Files from Source Repo
@@ -103,9 +109,24 @@ jobs:
           destination_path: "data/destination"
           commit_message: "Daily automated file copy commit"
           pr_title: "Daily automated file copy PR"
-          create_pr: "true"
+          create_pr: true
           source_repo_token: ${{ steps.create_token.outputs.token }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_repo_token: ${{ steps.create_token.outputs.token }}
+```
+
+Example without creation of PR:
+
+```yaml
+- name: Run file copy action
+  uses:
+  with:
+    source_repo: "octocat/source-repo"
+    source_path: "data/files"
+    destination_path: "data/destination"
+    commit_message: "Daily automated file copy commit"
+    create_pr: false
+    source_repo_token: ${{ steps.create_token.outputs.token }}
+    destination_repo_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## License
