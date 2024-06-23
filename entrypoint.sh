@@ -54,8 +54,7 @@ fi
 
 # Add and commit changes
 echo "Adding and committing changes..."
-git add "${DESTINATION_PATH}"
-git commit -m "${COMMIT_MESSAGE}"
+git commit -ma "${COMMIT_MESSAGE}"
 
 # Create Pull Request
 if [ "${CREATE_PR}" == "true" ]; then

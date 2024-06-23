@@ -5,7 +5,8 @@ RUN apk update && \
     git \
     curl \
     bash \
-    openssl
+    openssl \
+    jq
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
