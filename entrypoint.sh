@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-# Script fails if trying to access to an undefined variable
-set -u
+set -eu
+set +x
 
 # Required inputs
 SOURCE_REPO="${1}"
@@ -15,36 +13,49 @@ PR_TITLE="${6}"
 SOURCE_REPO_TOKEN="${7}"
 GITHUB_TOKEN="${8}"
 
+# Validate inputs
+if [ -z "$SOURCE_REPO" ] || [ -z "$SOURCE_PATH" ] || [ -z "$DESTINATION_PATH" ] || [ -z "$COMMIT_MESSAGE" ] || [ -z "$CREATE_PR" ] || [ -z "$PR_TITLE" ] || [ -z "$SOURCE_REPO_TOKEN" ] || [ -z "$GITHUB_TOKEN" ]; then
+    echo "Error: One or more required inputs are missing."
+    exit 1
+fi
+
+# Trust the current repository
+git config --global --add safe.directory /github/workspace
+
 # Clone the source repository
-git clone https://x-access-token:${SOURCE_REPO_TOKEN}@github.com/${SOURCE_REPO}.git source-repo
+git clone "https://x-access-token:${SOURCE_REPO_TOKEN}@github.com/${SOURCE_REPO}.git" source-repo || { echo "Failed to clone source repository"; exit 1; }
 
 # Create the destination directory if it doesn't exist
-mkdir -p ${DESTINATION_PATH}
+mkdir -p "${DESTINATION_PATH}"
 
 # Copy files from source to destination
-cp -r source-repo/${SOURCE_PATH} ${DESTINATION_PATH}
+cp -r "source-repo/${SOURCE_PATH}" "${DESTINATION_PATH}"
 
 # Configure git
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
 # Add, commit, and push changes
-git add ${DESTINATION_PATH}
+git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
-git push
+git pull --rebase origin "${BASE}"
+git push || { echo "Failed to push changes"; exit 1; }
 
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
   REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
   BASE=$(echo $GITHUB_REF | sed 's|refs/heads/||')
-  HEAD="auto-file-copy-$(date +%s)"
+  HEAD="auto-file-copy-$(date +%s)-$(openssl rand -hex 3)"
 
   # Create a new branch for the PR
-  git checkout -b ${HEAD}
-  git push --set-upstream origin ${HEAD}
+  git checkout -b "${HEAD}"
+  git push --set-upstream origin "${HEAD}"
 
   # Create the PR
   curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" \
        -d "{\"title\":\"${PR_TITLE}\", \"head\":\"${HEAD}\", \"base\":\"${BASE}\"}" \
-       https://api.github.com/repos/${OWNER}/${REPO}/pulls
+       "https://api.github.com/repos/${OWNER}/${REPO}/pulls"
 fi
+
+# Cleanup
+rm -rf source-repo
