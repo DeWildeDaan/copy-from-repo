@@ -15,20 +15,32 @@ inputs:
     description: 'The commit message for the changes.'
     required: false
     default: 'Automated file copy commit'
-  pr_title:
-    description: 'The title for the pull request.'
-    required: false
-    default: 'Automated file copy PR'
   create_pr:
     description: 'Whether to create a pull request (true/false).'
     required: false
     default: 'false'
+  pr_title:
+    description: 'The title for the pull request.'
+    required: false
+    default: 'Automated file copy PR'
   source_repo_token:
     description: 'Personal Access/GitHub App Token to access the source repository.'
     required: true
+  github_token:
+    description: 'GitHub token to gain write access to the current repository.'
+    required: true
 runs:
-  using: 'node12'
-  main: 'index.js'
+  using: docker
+  image: Dockerfile
+  args:
+    - '${{ inputs.source_repo }}'
+    - '${{ inputs.source_path }}'
+    - '${{ inputs.destination_path }}'
+    - '${{ inputs.commit_message }}'
+    - '${{ inputs.create_pr }}'
+    - '${{ inputs.pr_title }}'
+    - '${{ inputs.source_repo_token }}'
+    - '${{ inputs.github_token }}'
 branding:
   icon: 'download-cloud'
   color: 'purple'
