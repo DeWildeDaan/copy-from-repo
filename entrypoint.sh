@@ -22,29 +22,34 @@ fi
 # Trust the current repository
 git config --global --add safe.directory /github/workspace
 
+CLONE_DIR=$(mktemp -d)
+
 # Clone the source repository
-git clone "https://x-access-token:${SOURCE_REPO_TOKEN}@github.com/${SOURCE_REPO}.git" source-repo || { echo "Failed to clone source repository"; exit 1; }
+git clone "https://x-access-token:${SOURCE_REPO_TOKEN}@github.com/${SOURCE_REPO}.git" "$CLONE_DIR" || { echo "Failed to clone source repository"; exit 1; }
 
 # Create the destination directory if it doesn't exist
 mkdir -p "${DESTINATION_PATH}"
 
 # Copy files from source to destination
-cp -r "source-repo/${SOURCE_PATH}" "${DESTINATION_PATH}"
+cp -r "$CLONE_DIR/${SOURCE_PATH}" "${DESTINATION_PATH}"
 
 # Configure git
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-# Check if there are changes to commit
-if ! git diff --quiet --exit-code; then
-    echo "No changes to commit. Exiting gracefully."
-    exit 0
-fi
-
 # Add, commit, and push changes
 git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
 
+# Check if there are changes or untracked files
+if [[ -n $(git status --porcelain) ]]; then
+    echo "Changes or untracked files found."
+else
+    echo "No changes or untracked files found. Exiting gracefully."
+    exit 0
+fi
+
+# Create Pull Request
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
   REPO=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
@@ -63,6 +68,3 @@ else
     git pull --rebase origin main
     git push || { echo "Failed to push changes"; exit 1; }
 fi
-
-# Cleanup
-rm -rf source-repo
