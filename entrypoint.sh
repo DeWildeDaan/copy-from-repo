@@ -33,8 +33,7 @@ mkdir -p "${DESTINATION_PATH}"
 # Copy files from source to destination
 cp -r "$CLONE_DIR/${SOURCE_PATH}" "${DESTINATION_PATH}"
 
-# Switch to destination directory
-cd "$DESTINATION_PATH"
+pwd
 
 # Configure git
 git config --global user.name "${GITHUB_ACTOR}"
@@ -45,9 +44,7 @@ git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
 
 # Check if there are changes or untracked files
-if [[ -n $(git status --porcelain) ]]; then
-    echo "Changes or untracked files found."
-else
+if git diff-index --quiet HEAD --; then
     echo "No changes or untracked files found. Exiting gracefully."
     exit 0
 fi
