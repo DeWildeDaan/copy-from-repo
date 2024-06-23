@@ -35,6 +35,12 @@ cp -r "source-repo/${SOURCE_PATH}" "${DESTINATION_PATH}"
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
+# Check if there are changes to commit
+if ! git diff --quiet --exit-code; then
+    echo "No changes to commit. Exiting gracefully."
+    exit 0
+fi
+
 # Add, commit, and push changes
 git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
