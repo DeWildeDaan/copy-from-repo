@@ -38,13 +38,14 @@ git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 # Add, commit, and push changes
 git add "${DESTINATION_PATH}"
 git commit -m "${COMMIT_MESSAGE}"
-git pull --rebase origin "${BASE}"
+
+# Pull with rebase from the main branch
+git pull --rebase origin main
 git push || { echo "Failed to push changes"; exit 1; }
 
 if [ "${CREATE_PR}" == "true" ]; then
-  OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
-  REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
-  BASE=$(echo $GITHUB_REF | sed 's|refs/heads/||')
+  OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
+  REPO=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
   HEAD="auto-file-copy-$(date +%s)-$(openssl rand -hex 3)"
 
   # Create a new branch for the PR
@@ -53,7 +54,7 @@ if [ "${CREATE_PR}" == "true" ]; then
 
   # Create the PR
   curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" \
-       -d "{\"title\":\"${PR_TITLE}\", \"head\":\"${HEAD}\", \"base\":\"${BASE}\"}" \
+       -d "{\"title\":\"${PR_TITLE}\", \"head\":\"${HEAD}\", \"base\":\"main\"}" \
        "https://api.github.com/repos/${OWNER}/${REPO}/pulls"
 fi
 
