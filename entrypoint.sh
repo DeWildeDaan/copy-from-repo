@@ -54,7 +54,7 @@ fi
 
 # Add and commit changes
 echo "Adding and committing changes..."
-git add "${DESTINATION_PATH}"
+git add --all
 git commit -m "${COMMIT_MESSAGE}"
 
 # Create Pull Request
