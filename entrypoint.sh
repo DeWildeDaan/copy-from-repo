@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -eu
-set +x
+set -x
 
 # Required inputs
 SOURCE_REPO="${1}"
