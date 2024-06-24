@@ -64,7 +64,7 @@ if [ "${CREATE_PR}" == "true" ]; then
 
   # Add and commit changes
   echo "Adding and committing changes..."
-  git add -A
+  git add "${DESTINATION_PATH}"
   git commit -m "${COMMIT_MESSAGE}"
   
   git push --set-upstream origin "${HEAD}"
