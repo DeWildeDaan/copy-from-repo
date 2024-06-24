@@ -52,11 +52,6 @@ if git diff-index --quiet HEAD --; then
     exit 0
 fi
 
-# Add and commit changes
-echo "Adding and committing changes..."
-git add --all
-git commit -m "${COMMIT_MESSAGE}"
-
 # Create Pull Request
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
@@ -66,6 +61,12 @@ if [ "${CREATE_PR}" == "true" ]; then
   # Create a new branch for the PR
   echo "Creating new branch for Pull Request..."
   git checkout -b "${HEAD}"
+
+  # Add and commit changes
+  echo "Adding and committing changes..."
+  git add -A
+  git commit -m "${COMMIT_MESSAGE}"
+  
   git push --set-upstream origin "${HEAD}"
 
   # Create the PR
