@@ -47,16 +47,16 @@ git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 echo "Checking for changes..."
 git status
 
+# Add and commit changes
+echo "Adding and committing changes..."
+git add "${DESTINATION_PATH}"
+git commit -m "${COMMIT_MESSAGE}"
+
 if git diff-index --quiet HEAD --; then
     echo "No changes or untracked files found. Exiting gracefully."
     exit 0
 fi
 
-# Add and commit changes
-echo "Adding and committing changes..."
-git add "${DESTINATION_PATH}"
-git commit -m "${COMMIT_MESSAGE}"
-  
 # Create Pull Request
 if [ "${CREATE_PR}" == "true" ]; then
   OWNER=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f1)
